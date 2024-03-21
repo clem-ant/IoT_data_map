@@ -1,38 +1,9 @@
-import { AmbientLight, LightingEffect, PointLight } from "@deck.gl/core";
 import { TripsLayer } from "@deck.gl/geo-layers"; // Utilisation de TripsLayer pour afficher le trail
 import DeckGL from "@deck.gl/react";
 import maplibregl from "maplibre-gl";
 import React, { useEffect, useState } from "react";
 import { Map } from "react-map-gl";
 import data from "../data/data.json";
-
-const ambientLight = new AmbientLight({
-  color: [255, 255, 255],
-  intensity: 1.0,
-});
-
-const pointLight = new PointLight({
-  color: [255, 255, 255],
-  intensity: 2.0,
-  position: [43.5, 14.7, 8000],
-});
-
-const lightingEffect = new LightingEffect({ ambientLight, pointLight });
-
-const material = {
-  ambient: 0.1,
-  diffuse: 0.6,
-  shininess: 32,
-  specularColor: [60, 64, 70],
-};
-
-const DEFAULT_THEME = {
-  buildingColor: [74, 80, 87],
-  trailColor0: [253, 128, 93],
-  trailColor1: [23, 184, 190],
-  material,
-  effects: [lightingEffect],
-};
 
 const INITIAL_VIEW_STATE = {
   longitude: 1.4701428,
@@ -48,7 +19,6 @@ const MAP_STYLE =
 export default function Mapp({
   initialViewState = INITIAL_VIEW_STATE,
   mapStyle = MAP_STYLE,
-  theme = DEFAULT_THEME,
 }) {
   const [tripsData, setTripsData] = useState([]);
   const animationDuration = 600;
@@ -109,7 +79,6 @@ export default function Mapp({
   return (
     <DeckGL
       layers={trips}
-      effects={theme.effects}
       initialViewState={initialViewState}
       controller={true}
     >
