@@ -35,9 +35,9 @@ const DEFAULT_THEME = {
 };
 
 const INITIAL_VIEW_STATE = {
-  longitude: 1.47,
-  latitude: 43.6,
-  zoom: 10,
+  longitude: 1.4701428,
+  latitude: 43.5619913,
+  zoom: 18,
   pitch: 0,
   bearing: 0,
 };
@@ -51,89 +51,66 @@ export default function Mapp({
   theme = DEFAULT_THEME,
 }) {
   const [tripsData, setTripsData] = useState([]);
+  const animationDuration = 600;
+  const [animationTime, setAnimationTime] = useState(5);
+  useEffect(() => {
+    const animationInterval = setInterval(() => {
+      console.log(animationTime);
+      setAnimationTime((time) => (time + 1) % animationDuration);
+    }, 100);
+    return () => clearInterval(animationInterval);
+  }, [animationTime]); // Ajouter animationTime comme dépendance
 
   useEffect(() => {
-    // Obtenez la date actuelle
-    const currentDate = new Date();
-
-    // Trier les données par ordre chronologique en utilisant la date actuelle combinée avec l'heure dans log_time
-    const sortedData = data.slice().sort((a, b) => {
-      const [hoursA, minutesA, secondsA] = a.log_time.split(":");
-      const [hoursB, minutesB, secondsB] = b.log_time.split(":");
-      const dateA = new Date(
-        currentDate.getFullYear(),
-        currentDate.getMonth(),
-        currentDate.getDate(),
-        hoursA,
-        minutesA,
-        secondsA
-      );
-      const dateB = new Date(
-        currentDate.getFullYear(),
-        currentDate.getMonth(),
-        currentDate.getDate(),
-        hoursB,
-        minutesB,
-        secondsB
-      );
-      return dateA - dateB;
-    });
-
-    // Convertir les données triées en un format utilisable par TripsLayer
-    const formattedTripsData = sortedData.map((item) => ({
-      path: [
-        [
-          item.camPayload.camParameters.basicContainer.referencePosition.lon /
-            10e6,
-          item.camPayload.camParameters.basicContainer.referencePosition.lat /
-            10e6,
-        ],
+    const formattedTripsData = data.map((item, index) => ({
+      waypoints: [
+        {
+          coordinates: [
+            item.camPayload.camParameters.basicContainer.referencePosition.lon /
+              10e6,
+            item.camPayload.camParameters.basicContainer.referencePosition.lat /
+              10e6,
+          ],
+          timestamp: index,
+        },
       ],
-      timestamps: [currentDate.setHours(...item.log_time.split(":")) / 1000], // Convertir en secondes UNIX
-      vendor: 0,
     }));
-
     setTripsData(formattedTripsData);
   }, [data]);
-  console.log(tripsData);
   // Ajouter 'data' dans le tableau de dépendances pour s'assurer que useEffect se déclenche lorsque les données changent
+  // Extract coordinates and timestamps from tripsData
+  const paths = tripsData.flatMap((item) => {
+    return item.waypoints.map((waypoint) => waypoint.coordinates);
+  });
 
-  // Calculer l'index de temps actuel dans la boucle
-  //   const currentTimeIndex = Math.floor((Date.now() / 1000) % tripsData.length);
+  const timestamps = tripsData.flatMap((item) => {
+    return item.waypoints.map((waypoint) => waypoint.timestamp);
+  });
 
-  // Utiliser cet index pour déterminer l'heure actuelle dans les données
-  //   const currentTime = tripsData[currentTimeIndex].timestamps[0];
-
-  const layers = [
-    // Ajouter une couche TripsLayer pour afficher le trail sur la carte
-    new TripsLayer({
-      id: "trips-layer",
-      data: tripsData,
-      getPath: (d) => d.path,
-      getTimestamps: (d) => d.timestamps,
-      getColor: "#fff",
-      opacity: 1,
-      widthMinPixels: 5,
-      rounded: true,
-      trailLength: 10, // Longueur du trail en secondes
-      currentTime: (d) => d.timestamps, // Utiliser l'heure actuelle pour l'animation
-      shadowEnabled: false,
-    }),
-  ];
+  const trips = new TripsLayer({
+    id: "trips-layer",
+    data: tripsData,
+    getPath: () => paths,
+    getTimestamps: () => {
+      console.log(timestamps);
+      return timestamps;
+    },
+    getColor: [255, 255, 255], // Couleur blanche pour l'exemple, à modifier
+    opacity: 0.7,
+    widthMinPixels: 1,
+    rounded: true,
+    trailLength: 5, // Longueur du trail en secondes
+    currentTime: animationTime, // Boucle sur la durée totale
+  });
 
   return (
     <DeckGL
-      layers={layers}
+      layers={trips}
       effects={theme.effects}
       initialViewState={initialViewState}
       controller={true}
     >
-      <Map
-        reuseMaps
-        mapLib={maplibregl}
-        mapStyle={mapStyle}
-        preventStyleDiffing={true}
-      />
+      <Map mapLib={maplibregl} mapStyle={mapStyle} preventStyleDiffing={true} />
     </DeckGL>
   );
 }
