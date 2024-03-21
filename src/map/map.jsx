@@ -43,7 +43,7 @@ const INITIAL_VIEW_STATE = {
 };
 
 const MAP_STYLE =
-  "https://basemaps.cartocdn.com/gl/dark-matter-nolabels-gl-style/style.json";
+  "https://tiles.basemaps.cartocdn.com/gl/voyager-gl-style/style.json";
 
 export default function Mapp({
   initialViewState = INITIAL_VIEW_STATE,
@@ -95,7 +95,7 @@ export default function Mapp({
       console.log(timestamps);
       return timestamps;
     },
-    getColor: [255, 255, 255], // Couleur blanche pour l'exemple, à modifier
+    getColor: [0, 0, 0], // Couleur blanche pour l'exemple, à modifier
     opacity: 0.5,
     widthMinPixels: 1,
     rounded: true,
