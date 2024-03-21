@@ -95,9 +95,10 @@ export default function Mapp({
       console.log(timestamps);
       return timestamps;
     },
-    getColor: [0, 0, 0], // Couleur blanche pour l'exemple, à modifier
+    getColor: [255, 159, 0], // Couleur blanche pour l'exemple, à modifier
     opacity: 0.5,
-    widthMinPixels: 1,
+    widthMinPixels: 0.1,
+    widthMaxPixels: 3,
     rounded: true,
     trailLength: 15, // Longueur du trail en secondes
     currentTime: animationTime, // Boucle sur la durée totale
