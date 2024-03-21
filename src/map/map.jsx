@@ -96,11 +96,13 @@ export default function Mapp({
       return timestamps;
     },
     getColor: [255, 255, 255], // Couleur blanche pour l'exemple, à modifier
-    opacity: 0.7,
+    opacity: 0.5,
     widthMinPixels: 1,
     rounded: true,
-    trailLength: 5, // Longueur du trail en secondes
+    trailLength: 15, // Longueur du trail en secondes
     currentTime: animationTime, // Boucle sur la durée totale
+    shadow: false,
+    fadeTrail: false,
   });
 
   return (
