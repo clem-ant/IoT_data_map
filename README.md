@@ -6,6 +6,7 @@
 2. Installer les dépendance : `npm install`
 3. Lancer le projet : `npm start`
 4. Normalement, l'app s'ouvre toute seule sur [http://localhost:3000](http://localhost:3000).
+5. Dans ce cas, statique, les données sont prises directement dans le fichier src/data/data.json
 
 Le script python permet de parser le CAMS.log de ce format la et de le mettre sous json avec son timestamp :
 
